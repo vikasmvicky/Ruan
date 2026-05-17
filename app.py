@@ -1,7 +1,11 @@
 import streamlit as st
 import pandas as pd
+from ui.theme import (
+    get_nature_theme,
+    get_forest_background,
+    get_ruan_widget
+)
 from ui.ruan import show_ruan_cinematic, show_ruan_storytelling
-from ui.styles import get_dark_theme
 from core.analyst import (
     load_sales_data,
     analyse_sales,
@@ -17,8 +21,25 @@ st.set_page_config(
     layout="wide"
 )
 
-# ─── Apply Dark Theme ──────────────────────────────────────
-st.markdown(get_dark_theme(), unsafe_allow_html=True)
+# ─── Apply Nature Theme ────────────────────────────────────
+st.markdown(get_nature_theme(), unsafe_allow_html=True)
+
+# ─── Forest Background ─────────────────────────────────────
+st.markdown(get_forest_background(), unsafe_allow_html=True)
+
+# ─── Session State ─────────────────────────────────────────
+if "emotion" not in st.session_state:
+    st.session_state.emotion = "happy"
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "insights" not in st.session_state:
+    st.session_state.insights = None
+
+# ─── Floating Ruan Widget ──────────────────────────────────
+st.markdown(
+    get_ruan_widget(emotion=st.session_state.emotion),
+    unsafe_allow_html=True
+)
 
 # ─── Navigation ────────────────────────────────────────────
 st.markdown("""
@@ -33,16 +54,12 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ─── Session State ─────────────────────────────────────────
-if "emotion" not in st.session_state:
-    st.session_state.emotion = "happy"
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "insights" not in st.session_state:
-    st.session_state.insights = None
-
-# ─── Hero Section ──────────────────────────────────────────
+# ══════════════════════════════════════════════════════════
+# HERO / ONBOARDING PAGE
+# ══════════════════════════════════════════════════════════
 if "city" not in st.session_state:
+
+    # ── Hero section ──
     st.markdown("""
     <div class="hero-section">
         <div class="badge" style="margin-bottom:24px;">
@@ -79,33 +96,31 @@ if "city" not in st.session_state:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Ruan character ──
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    show_ruan_cinematic(
-        emotion="happy",
-        message="Namaste! I am Ruan 🙏 Your personal business friend!",
-        owly_message="Upload your data and let's find insights!"
-    )
-
     # ── Features section ──
     st.markdown("""
     <div class="features-section">
         <p class="section-label">Why Ruan</p>
         <h2 class="section-title">
-            Built for how Indian<br>businesses actually work
+            Built for how Indian<br>
+            businesses actually work
         </h2>
         <div class="cards-grid">
             <div class="feature-card">
                 <div class="card-icon">📷</div>
-                <div class="card-title">Photo your rough book</div>
+                <div class="card-title">
+                    Photo your rough book
+                </div>
                 <div class="card-desc">
-                    No CSV needed. Just take a photo of your
-                    register. Ruan reads it automatically.
+                    No CSV needed. Just take a photo
+                    of your register. Ruan reads
+                    it automatically.
                 </div>
             </div>
             <div class="feature-card">
                 <div class="card-icon">🗣️</div>
-                <div class="card-title">Speak in your language</div>
+                <div class="card-title">
+                    Speak in your language
+                </div>
                 <div class="card-desc">
                     Kannada, Hindi, Tamil, English.
                     Ruan understands and responds
@@ -114,16 +129,20 @@ if "city" not in st.session_state:
             </div>
             <div class="feature-card">
                 <div class="card-icon">🏙️</div>
-                <div class="card-title">Knows your city</div>
+                <div class="card-title">
+                    Knows your city
+                </div>
                 <div class="card-desc">
-                    ₹20,000 profit in Mysuru ≠ Bangalore.
-                    Ruan understands local economics
-                    automatically.
+                    ₹20,000 profit in Mysuru is not
+                    the same as Bangalore. Ruan knows
+                    your local economics.
                 </div>
             </div>
             <div class="feature-card">
                 <div class="card-icon">🧠</div>
-                <div class="card-title">Remembers everything</div>
+                <div class="card-title">
+                    Remembers everything
+                </div>
                 <div class="card-desc">
                     Ask about last month. Last week.
                     Ruan remembers your entire
@@ -132,7 +151,9 @@ if "city" not in st.session_state:
             </div>
             <div class="feature-card">
                 <div class="card-icon">🔒</div>
-                <div class="card-title">100% private</div>
+                <div class="card-title">
+                    100% private
+                </div>
                 <div class="card-desc">
                     Your data never leaves your device.
                     No cloud. No server.
@@ -141,7 +162,9 @@ if "city" not in st.session_state:
             </div>
             <div class="feature-card">
                 <div class="card-icon">💰</div>
-                <div class="card-title">Forever free</div>
+                <div class="card-title">
+                    Forever free
+                </div>
                 <div class="card-desc">
                     Not a trial. Not freemium.
                     Permanently free for every
@@ -152,9 +175,10 @@ if "city" not in st.session_state:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Onboarding ──
+    # ── Onboarding form ──
     st.markdown("""
-    <div style='max-width:600px;margin:60px auto 0;padding:0 20px;'>
+    <div style='max-width:600px;margin:60px auto 0;
+    padding:0 20px;position:relative;z-index:1;'>
         <p class="section-label" style='text-align:center;'>
             Get Started
         </p>
@@ -172,8 +196,9 @@ if "city" not in st.session_state:
         )
         business = st.selectbox(
             "🏪 Your business type",
-            ["Medical Shop", "Kirana Store", "Textile Shop",
-             "Shoe Showroom", "Fancy Store", "Vegetable Stall",
+            ["Medical Shop", "Kirana Store",
+             "Textile Shop", "Shoe Showroom",
+             "Fancy Store", "Vegetable Stall",
              "Pan Shop", "Hardware Store", "Other"]
         )
         city = st.text_input(
@@ -192,18 +217,35 @@ if "city" not in st.session_state:
                 st.warning("Please enter your city!")
                 st.rerun()
 
-# ─── Analysis Page ─────────────────────────────────────────
+    # ── Footer hero ──
+    st.markdown("""
+        <div style='text-align:center;padding:40px 20px;
+        position:relative;z-index:1;'>
+            <p style='font-size:13px;
+            color:rgba(255,255,255,0.2);'>
+                Ruan — Built for India.
+                Built for Ramesh. Built to win.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════
+# ANALYSIS PAGE
+# ══════════════════════════════════════════════════════════
 else:
-    st.markdown("<div style='padding-top:80px;'></div>",
-                unsafe_allow_html=True)
+    st.markdown(
+        "<div style='padding-top:90px;'></div>",
+        unsafe_allow_html=True
+    )
 
     # ── Top bar ──
     col1, col2, col3 = st.columns([3, 1, 1])
     with col1:
         st.markdown(f"""
             <div style='display:flex;align-items:center;
-            gap:12px;margin-bottom:8px;'>
-                <span style='font-size:20px;'>🏪</span>
+            gap:12px;margin-bottom:8px;
+            position:relative;z-index:1;'>
+                <span style='font-size:22px;'>🏪</span>
                 <div>
                     <p style='margin:0;font-weight:700;
                     font-size:18px;color:#FFFFFF;'>
@@ -225,34 +267,16 @@ else:
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    # ── Ruan character ──
-    show_ruan_cinematic(
-        emotion=st.session_state.emotion,
-        message={
-            "happy":     "Namaste! Upload your data "
-                         "and I'll find insights! 🙏",
-            "thinking":  "Let me analyse your data... 🤔",
-            "excited":   "I found something amazing! 🎉",
-            "worried":   "Something needs attention... ⚠️",
-            "surprised": "Wow! Look at this! 😮"
-        }.get(st.session_state.emotion, "Namaste! 🙏"),
-        owly_message={
-            "happy":     "Upload your file — "
-                         "CSV or Excel both work!",
-            "thinking":  "Reading every row carefully...",
-            "excited":   "Great numbers! Let me explain...",
-            "worried":   "Don't worry — we will fix this!",
-            "surprised": "This is very interesting data!"
-        }.get(st.session_state.emotion, "")
-    )
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # ── Upload ──
+    # ── Upload section ──
     st.markdown("""
-        <p class='section-label'>Step 1</p>
+        <p class='section-label'
+        style='position:relative;z-index:1;'>
+            Step 1
+        </p>
         <h3 style='color:#FFFFFF;font-weight:700;
-        margin-bottom:16px;'>Upload your sales data</h3>
+        margin-bottom:16px;position:relative;z-index:1;'>
+            Upload your sales data
+        </h3>
     """, unsafe_allow_html=True)
     st.caption("Supported: CSV, Excel (.xlsx, .xls)")
 
@@ -263,16 +287,29 @@ else:
     )
 
     if uploaded_file:
+        # Update widget to thinking
         st.session_state.emotion = "thinking"
+        st.markdown(
+            get_ruan_widget(
+                emotion="thinking",
+                message="Reading your data... 🤔",
+                owly_msg="Scanning every row carefully..."
+            ),
+            unsafe_allow_html=True
+        )
 
         with st.spinner("Ruan is reading your data..."):
             df = load_sales_data(uploaded_file)
 
         if df is None:
             st.session_state.emotion = "worried"
-            st.error("Could not read file. Please check format!")
+            st.error(
+                "Could not read file. "
+                "Please check format and try again!"
+            )
             st.stop()
 
+        # ── Data preview ──
         st.markdown("""
             <p class='section-label'
             style='margin-top:32px;'>Your Data</p>
@@ -288,7 +325,7 @@ else:
 
         st.markdown("<hr>", unsafe_allow_html=True)
 
-        # ── Analysis ──
+        # ── Run analysis ──
         with st.spinner("Ruan is finding insights..."):
             insights = analyse_sales(df)
             st.session_state.insights = insights
@@ -296,12 +333,23 @@ else:
         if not insights:
             st.session_state.emotion = "worried"
             st.warning(
-                "Could not analyse. Check your file has "
-                "Sales and Profit columns."
+                "Could not analyse. Check your file "
+                "has Sales and Profit columns."
             )
             st.stop()
 
-        # ── Cinematic story ──
+        # Update widget to excited
+        st.session_state.emotion = "excited"
+        st.markdown(
+            get_ruan_widget(
+                emotion="excited",
+                message="I found amazing insights! 🎉",
+                owly_msg="Scroll down to see everything!"
+            ),
+            unsafe_allow_html=True
+        )
+
+        # ── Cinematic storytelling ──
         st.markdown("""
             <p class='section-label'>Ruan's Story</p>
             <h3 style='color:#FFFFFF;font-weight:700;
@@ -316,10 +364,9 @@ else:
             st.session_state.city
         )
 
-        st.session_state.emotion = "excited"
         st.markdown("<hr>", unsafe_allow_html=True)
 
-        # ── Health Check ──
+        # ── Health check ──
         health = check_profit_health(
             insights.get('total_profit', 0),
             st.session_state.business,
@@ -329,14 +376,17 @@ else:
 
         st.markdown(f"""
             <div class='insight-card' style='
-            border-left:4px solid
-            {"#1D9E75" if health["status"]=="healthy"
+            border-left: 4px solid
+            {"#4AD295" if health["status"]=="healthy"
              else "#BA7517" if health["status"]=="warning"
              else "#791F1F"};'>
-                <p style='margin:0 0 8px;font-size:20px;'>
-                    {health["emoji"]}
+                <p style='margin:0 0 8px;'>
+                    <span style='font-size:20px;'>
+                        {health["emoji"]}
+                    </span>
                     <span style='font-size:16px;
-                    font-weight:700;color:#FFFFFF;'>
+                    font-weight:700;color:#FFFFFF;
+                    margin-left:8px;'>
                         Business Health —
                         {health["status"].title()}
                     </span>
@@ -348,7 +398,7 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
-        # ── Metrics ──
+        # ── Key metrics ──
         st.markdown("""
             <p class='section-label'
             style='margin-top:32px;'>Key Numbers</p>
@@ -392,8 +442,7 @@ else:
         # ── Owly wisdom ──
         st.markdown(f"""
             <div class='insight-card'
-            style='border-left:4px solid #BA7517;
-            margin-top:8px;'>
+            style='border-left:4px solid #BA7517;'>
                 <p style='margin:0 0 6px;font-size:15px;
                 font-weight:600;color:#EF9F27;'>
                     🦉 Owly's Wisdom
@@ -420,24 +469,26 @@ else:
             st.markdown("""
                 <p class='section-label'
                 style='margin-top:32px;'>
-                    Top 3 Actions
+                    Top Actions
                 </p>
-                <h3 style='color:#FFFFFF;font-weight:700;
-                margin-bottom:16px;'>
+                <h3 style='color:#FFFFFF;
+                font-weight:700;margin-bottom:16px;'>
                     Ruan's recommendations for you
                 </h3>
             """, unsafe_allow_html=True)
             for i, win in enumerate(wins, 1):
                 st.markdown(f"""
                     <div class='insight-card'>
-                        <span style='color:#7F77DD;
+                        <span style='color:#4AD295;
                         font-weight:700;'>{i}.</span>
-                        <span style='color:rgba(255,255,255,0.8);
-                        font-size:14px;'> {win}</span>
+                        <span style='color:rgba(
+                        255,255,255,0.8);font-size:14px;'>
+                            {win}
+                        </span>
                     </div>
                 """, unsafe_allow_html=True)
 
-        # ── Best vs Worst ──
+        # ── Best vs worst ──
         st.markdown("""
             <p class='section-label'
             style='margin-top:32px;'>Performance</p>
@@ -449,17 +500,17 @@ else:
         with c1:
             st.markdown(f"""
                 <div class='insight-card'
-                style='border-left:4px solid #1D9E75;
+                style='border-left:4px solid #4AD295;
                 text-align:center;'>
-                    <p style='font-size:12px;color:#1D9E75;
+                    <p style='font-size:11px;color:#4AD295;
                     margin:0;text-transform:uppercase;
                     letter-spacing:1px;'>⭐ Best Product</p>
                     <p style='font-size:20px;font-weight:700;
                     color:#FFFFFF;margin:8px 0 4px;'>
                         {insights.get('best_product','N/A')}
                     </p>
-                    <p style='font-size:14px;color:#1D9E75;
-                    margin:0;'>
+                    <p style='font-size:14px;
+                    color:#4AD295;margin:0;'>
                         ₹{insights.get(
                             'best_product_profit',0):,.0f}
                     </p>
@@ -470,15 +521,17 @@ else:
                 <div class='insight-card'
                 style='border-left:4px solid #791F1F;
                 text-align:center;'>
-                    <p style='font-size:12px;color:#EF4444;
+                    <p style='font-size:11px;color:#EF4444;
                     margin:0;text-transform:uppercase;
-                    letter-spacing:1px;'>⚠️ Needs Attention</p>
+                    letter-spacing:1px;'>
+                        ⚠️ Needs Attention
+                    </p>
                     <p style='font-size:20px;font-weight:700;
                     color:#FFFFFF;margin:8px 0 4px;'>
                         {insights.get('worst_product','N/A')}
                     </p>
-                    <p style='font-size:14px;color:#EF4444;
-                    margin:0;'>
+                    <p style='font-size:14px;
+                    color:#EF4444;margin:0;'>
                         ₹{insights.get(
                             'worst_product_profit',0):,.0f}
                     </p>
@@ -495,13 +548,11 @@ else:
             with d1:
                 st.markdown(f"""
                     <div class='insight-card'
-                    style='border-left:4px solid #1D9E75;
+                    style='border-left:4px solid #4AD295;
                     text-align:center;'>
-                        <p style='color:#1D9E75;margin:0;
-                        font-size:12px;text-transform:uppercase;
-                        letter-spacing:1px;'>
-                            ✅ Best Day
-                        </p>
+                        <p style='color:#4AD295;margin:0;
+                        font-size:11px;text-transform:uppercase;
+                        letter-spacing:1px;'>✅ Best Day</p>
                         <p style='color:#FFFFFF;font-size:22px;
                         font-weight:700;margin:8px 0 0;'>
                             {insights.get('best_day','N/A')}
@@ -514,10 +565,8 @@ else:
                     style='border-left:4px solid #791F1F;
                     text-align:center;'>
                         <p style='color:#EF4444;margin:0;
-                        font-size:12px;text-transform:uppercase;
-                        letter-spacing:1px;'>
-                            ❌ Worst Day
-                        </p>
+                        font-size:11px;text-transform:uppercase;
+                        letter-spacing:1px;'>❌ Worst Day</p>
                         <p style='color:#FFFFFF;font-size:22px;
                         font-weight:700;margin:8px 0 0;'>
                             {insights.get('worst_day','N/A')}
@@ -533,13 +582,13 @@ else:
             """, unsafe_allow_html=True)
             st.warning(
                 f"⚠️ Heavy discounts are hurting profits! "
-                f"High discount avg: "
-                f"₹{insights.get('high_discount_profit',0):,.2f} "
-                f"vs Low discount avg: "
-                f"₹{insights.get('low_discount_profit',0):,.2f}"
+                f"High discount avg: ₹"
+                f"{insights.get('high_discount_profit',0):,.2f}"
+                f" vs Low discount avg: ₹"
+                f"{insights.get('low_discount_profit',0):,.2f}"
             )
 
-        # ── Chat ──
+        # ── Chat section ──
         st.markdown("<hr>", unsafe_allow_html=True)
         st.markdown("""
             <p class='section-label'>Ask Ruan</p>
@@ -547,23 +596,24 @@ else:
             margin-bottom:8px;'>
                 Ask anything about your business
             </h3>
-            <p style='color:rgba(255,255,255,0.4);
+            <p style='color:rgba(255,255,255,0.35);
             font-size:13px;margin-bottom:20px;'>
                 In plain language — no technical terms needed
             </p>
         """, unsafe_allow_html=True)
 
-        for msg in st.session_state.messages:
-            if msg["role"] == "user":
+        # Chat history
+        for chat_msg in st.session_state.messages:
+            if chat_msg["role"] == "user":
                 st.markdown(f"""
                     <div class='chat-user'>
-                        👤 {msg["content"]}
+                        👤 {chat_msg["content"]}
                     </div>
                 """, unsafe_allow_html=True)
             else:
                 st.markdown(f"""
                     <div class='chat-ruan'>
-                        🤖 {msg["content"]}
+                        🤖 {chat_msg["content"]}
                     </div>
                 """, unsafe_allow_html=True)
 
@@ -582,9 +632,9 @@ else:
                 })
                 with st.spinner("Ruan is thinking... 🤔"):
                     response = (
-                        "I am still getting my voice ready! "
-                        "Come back soon — LLM is being "
-                        "connected! 🤖"
+                        "I am getting my voice ready! "
+                        "LangChain is being connected soon. "
+                        "Come back tomorrow! 🤖"
                     )
                 st.session_state.messages.append({
                     "role": "assistant",
@@ -597,13 +647,14 @@ else:
 
     # ── Footer ──
     st.markdown("""
-        <div style='text-align:center;padding:60px 20px;
-        border-top:1px solid rgba(255,255,255,0.06);
-        margin-top:60px;'>
+        <div style='text-align:center;
+        padding:60px 20px;
+        border-top:1px solid rgba(74,210,149,0.06);
+        margin-top:60px;position:relative;z-index:1;'>
             <p style='font-size:22px;font-weight:800;
             color:#FFFFFF;margin:0 0 8px;'>Ruan.</p>
             <p style='font-size:13px;
-            color:rgba(255,255,255,0.3);margin:0;'>
+            color:rgba(255,255,255,0.25);margin:0;'>
                 Built for India's small businesses.
                 Your data never leaves your device.
                 100% private. 100% free. Forever.
