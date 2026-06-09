@@ -3,18 +3,15 @@ def get_nature_theme():
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* ── Global ── */
 html, body, [class*="css"] {
     font-family: 'Inter', sans-serif !important;
 }
 
-/* ── Hide Streamlit defaults ── */
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
 header { visibility: hidden; }
 .stDeployButton { display: none; }
 
-/* ── Main background — deep forest ── */
 .stApp {
     background: #060D0A;
     color: #FFFFFF;
@@ -26,7 +23,7 @@ header { visibility: hidden; }
     max-width: 100% !important;
 }
 
-/* ── Animated forest background ── */
+/* ── Forest background ── */
 .forest-bg {
     position: fixed;
     top: 0; left: 0;
@@ -36,12 +33,11 @@ header { visibility: hidden; }
     pointer-events: none;
 }
 
-/* ── Firefly particles ── */
 @keyframes firefly {
     0%   { transform: translate(0,0) scale(1); opacity:0; }
     20%  { opacity: 0.8; }
     80%  { opacity: 0.6; }
-    100% { transform: translate(var(--tx), var(--ty)) scale(0.5); opacity:0; }
+    100% { transform: translate(var(--tx),var(--ty)) scale(0.5); opacity:0; }
 }
 
 @keyframes glow-pulse {
@@ -58,7 +54,6 @@ header { visibility: hidden; }
                glow-pulse 2s ease-in-out infinite;
 }
 
-/* ── Forest trees silhouette ── */
 .forest-silhouette {
     position: fixed;
     bottom: 0; left: 0;
@@ -78,7 +73,7 @@ header { visibility: hidden; }
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 999;
-    background: rgba(6,13,10,0.85);
+    background: rgba(6,13,10,0.90);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(74,210,149,0.1);
     padding: 16px 40px;
@@ -106,6 +101,7 @@ header { visibility: hidden; }
     font-weight: 500;
     color: rgba(255,255,255,0.5);
     text-decoration: none;
+    transition: color 0.2s;
 }
 
 .nav-link:hover { color: #4AD295; }
@@ -136,15 +132,13 @@ header { visibility: hidden; }
     z-index: 1;
 }
 
-/* ── Green glow behind hero ── */
 .hero-section::before {
     content: '';
     position: absolute;
     top: 20%;
     left: 50%;
     transform: translateX(-50%);
-    width: 700px;
-    height: 400px;
+    width: 700px; height: 400px;
     background: radial-gradient(
         ellipse,
         rgba(74,210,149,0.06) 0%,
@@ -153,7 +147,6 @@ header { visibility: hidden; }
     pointer-events: none;
 }
 
-/* ── Hero headline ── */
 .hero-headline {
     font-size: clamp(36px,6vw,72px);
     font-weight: 900;
@@ -185,14 +178,18 @@ header { visibility: hidden; }
     margin: 0 0 40px;
 }
 
-/* ── Stats ── */
+/* ── Stats bar ── */
 .stats-bar {
     display: flex;
     gap: 48px;
     margin-top: 60px;
     padding-top: 40px;
     border-top: 1px solid rgba(74,210,149,0.1);
+    flex-wrap: wrap;
+    justify-content: center;
 }
+
+.stat-item { text-align: center; }
 
 .stat-number {
     font-size: 28px;
@@ -207,12 +204,11 @@ header { visibility: hidden; }
     margin-top: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    text-align: center;
 }
 
-/* ── Feature cards ── */
+/* ── Features section ── */
 .features-section {
-    background: rgba(10,20,15,0.9);
+    background: rgba(10,20,15,0.95);
     padding: 80px 40px;
     position: relative;
     z-index: 1;
@@ -277,15 +273,6 @@ header { visibility: hidden; }
     line-height: 1.6;
 }
 
-/* ── Analysis section ── */
-.analysis-wrap {
-    position: relative;
-    z-index: 1;
-    padding: 80px 40px;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
 /* ── Upload area ── */
 div[data-testid="stFileUploader"] {
     background: rgba(74,210,149,0.03) !important;
@@ -323,9 +310,7 @@ div[data-testid="stFileUploader"]:hover {
 /* ── Buttons ── */
 .stButton > button {
     background: linear-gradient(
-        135deg,
-        #1D9E75,
-        #4AD295
+        135deg, #1D9E75, #4AD295
     ) !important;
     color: #060D0A !important;
     border: none !important;
@@ -372,7 +357,7 @@ div[data-testid="metric-container"]
     border: 1px solid rgba(74,210,149,0.1) !important;
 }
 
-/* ── Alert boxes ── */
+/* ── Alerts ── */
 .stInfo {
     background: rgba(74,210,149,0.08) !important;
     border: 1px solid rgba(74,210,149,0.2) !important;
@@ -450,7 +435,6 @@ div[data-testid="metric-container"]
     background: rgba(74,210,149,0.6);
 }
 
-/* ── Headings ── */
 h1,h2,h3,h4 {
     color: #FFFFFF !important;
     font-family: 'Inter', sans-serif !important;
@@ -472,41 +456,29 @@ hr {
 }
 
 @keyframes widget-glow {
-    0%,100% {
-        box-shadow: 0 8px 32px rgba(74,210,149,0.2);
-    }
-    50% {
-        box-shadow: 0 8px 48px rgba(74,210,149,0.5);
-    }
+    0%,100% { box-shadow: 0 8px 32px rgba(74,210,149,0.2); }
+    50%      { box-shadow: 0 8px 48px rgba(74,210,149,0.5); }
 }
 
 @keyframes slide-in-right {
-    from {
-        transform: translateX(120px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    from { transform: translateX(120px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
 }
 
 .ruan-widget {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: 24px; right: 24px;
     z-index: 998;
-    background: rgba(6,13,10,0.92);
+    background: rgba(6,13,10,0.95);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(74,210,149,0.2);
+    border: 1px solid rgba(74,210,149,0.25);
     border-radius: 24px;
     padding: 16px;
-    width: 220px;
+    width: 230px;
     animation: widget-float 3s ease-in-out infinite,
                widget-glow 3s ease-in-out infinite,
                slide-in-right 0.5s ease-out;
-    cursor: pointer;
-    transition: width 0.3s, padding 0.3s;
+    transition: width 0.3s, border-color 0.3s;
 }
 
 .ruan-widget:hover {
@@ -522,11 +494,11 @@ hr {
 }
 
 .widget-dot {
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     border-radius: 50%;
     background: #4AD295;
     animation: glow-pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
 }
 
 .widget-name {
@@ -543,7 +515,7 @@ hr {
 
 .widget-msg {
     font-size: 12px;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.75);
     line-height: 1.5;
     padding: 8px 10px;
     background: rgba(74,210,149,0.06);
@@ -553,7 +525,7 @@ hr {
 
 .owly-msg {
     font-size: 11px;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.5);
     line-height: 1.5;
     padding: 6px 10px;
     background: rgba(186,117,23,0.06);
@@ -564,11 +536,10 @@ hr {
 </style>
 
 <script>
-// ── Firefly particles ──
 function createFireflies() {
-    const container = document.querySelector('.forest-bg');
+    const container = document.getElementById('forestBg');
     if (!container) return;
-    for (let i = 0; i < 35; i++) {
+    for (let i = 0; i < 40; i++) {
         const ff = document.createElement('div');
         ff.className = 'firefly';
         ff.style.cssText = `
@@ -581,19 +552,17 @@ function createFireflies() {
             width: ${Math.random()*3+2}px;
             height: ${Math.random()*3+2}px;
             background: ${Math.random()>0.5
-                ? '#4AD295'
-                : '#89D4B0'};
+                ? '#4AD295' : '#89D4B0'};
         `;
         container.appendChild(ff);
     }
 }
-setTimeout(createFireflies, 500);
+setTimeout(createFireflies, 600);
 </script>
 """
 
 
 def get_forest_background():
-    """Animated forest background with fireflies"""
     return """
 <div class="forest-bg" id="forestBg"></div>
 <div class="forest-silhouette"></div>
@@ -601,8 +570,6 @@ def get_forest_background():
 
 
 def get_ruan_widget(emotion="happy", message="", owly_msg=""):
-    """Floating Ruan companion widget"""
-
     emotions = {
         "happy":     ("🤖", "Ready to help!"),
         "thinking":  ("🤔", "Analysing..."),
@@ -610,10 +577,7 @@ def get_ruan_widget(emotion="happy", message="", owly_msg=""):
         "worried":   ("⚠️", "Needs attention"),
         "surprised": ("😮", "Interesting!"),
     }
-
-    emoji, status = emotions.get(
-        emotion, emotions["happy"]
-    )
+    emoji, status = emotions.get(emotion, emotions["happy"])
 
     ruan_msg = message or {
         "happy":     "Namaste! Upload your data 🙏",
@@ -632,7 +596,7 @@ def get_ruan_widget(emotion="happy", message="", owly_msg=""):
     }.get(emotion, "")
 
     return f"""
-<div class="ruan-widget" title="Click to talk to Ruan">
+<div class="ruan-widget">
     <div class="widget-header">
         <div class="widget-dot"></div>
         <span class="widget-name">{emoji} Ruan</span>
