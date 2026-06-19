@@ -376,11 +376,107 @@ else:
         </p>
     """, unsafe_allow_html=True)
 
+    # Import new module
+from core.data_entry import (
+    ocr_to_dataframe,
+    extract_sale_from_text,
+    save_conversational_entry,
+    get_vendor_entries_as_df,
+    export_entries_to_excel
+)
+
+tab1, tab2, tab3 = st.tabs([
+    "📁 Upload File",
+    "📷 Photo of Register",
+    "💬 Tell Ruan"
+])
+
+uploaded_file = None
+
+with tab1:
     uploaded_file = st.file_uploader(
         "Upload",
         type=["csv", "xlsx", "xls"],
         label_visibility="collapsed"
     )
+
+with tab2:
+    st.caption("Take a photo of your handwritten register")
+    photo_file = st.file_uploader(
+        "Upload photo",
+        type=["jpg", "jpeg", "png"],
+        label_visibility="collapsed",
+        key="photo_upload"
+    )
+
+    if photo_file:
+        with st.spinner("Ruan is reading your handwriting... 🔍"):
+            ocr_df, raw_text = ocr_to_dataframe(photo_file)
+
+        if ocr_df is not None:
+            st.success(f"Found {len(ocr_df)} items!")
+            st.dataframe(ocr_df, use_container_width=True)
+            if st.button("✅ Use this data"):
+                # Convert to standard format for analysis
+                ocr_df['Sales'] = ocr_df['Quantity'] * ocr_df['Price']
+                ocr_df['Profit'] = ocr_df['Sales'] * 0.2  # estimate
+                uploaded_file = "ocr_data"
+                st.session_state.ocr_df = ocr_df
+        else:
+            st.warning(raw_text or "Could not read the image clearly. Try better lighting!")
+
+with tab3:
+    st.caption(
+        "Just tell Ruan what you sold today — "
+        "in any language!"
+    )
+
+    sale_text = st.text_input(
+        "Tell Ruan",
+        placeholder="e.g. Aaj maine 50 Crocin becha 15 rupaye mein",
+        label_visibility="collapsed",
+        key="conversational_entry"
+    )
+
+    if st.button("Add Sale 💬", key="add_sale_btn"):
+        if sale_text:
+            with st.spinner("Understanding..."):
+                extracted = extract_sale_from_text(
+                    sale_text, None,
+                    st.session_state.get('vendor', 'friend'),
+                    st.session_state.business,
+                    st.session_state.city
+                )
+
+            if extracted and extracted.get('found'):
+                save_conversational_entry(
+                    st.session_state.get('vendor', 'unknown'),
+                    extracted['item'],
+                    extracted['quantity'],
+                    extracted['price']
+                )
+                st.success(
+                    f"✅ Added: {extracted['quantity']} x "
+                    f"{extracted['item']} at "
+                    f"Rs {extracted['price']} each"
+                )
+            else:
+                st.warning(
+                    "Couldn't understand that. Try: "
+                    "'sold 50 Crocin at 15 rupees'"
+                )
+
+    # Show entries so far
+    entries_df = get_vendor_entries_as_df(
+        st.session_state.get('vendor', 'unknown')
+    )
+    if entries_df is not None:
+        st.markdown("##### Your entries so far:")
+        st.dataframe(entries_df, use_container_width=True)
+
+        if st.button("📊 Analyse my entries"):
+            uploaded_file = "conversational_data"
+            st.session_state.conv_df = entries_df
 
     # ── No data button ──
     col_a, col_b = st.columns([1, 1])
@@ -454,7 +550,14 @@ else:
         )
 
         with st.spinner("Ruan is reading your data..."):
-            df = load_sales_data(uploaded_file)
+            if uploaded_file == "ocr_data":
+                df = st.session_state.ocr_df
+            elif uploaded_file == "conversational_data":
+                df = st.session_state.conv_df.copy()
+                df['Sales'] = df['Quantity'] * df['Price']
+                df['Profit'] = df['Sales'] * 0.2
+            else:
+                df = load_sales_data(uploaded_file)
 
         if df is None:
             st.session_state.emotion = "worried"
