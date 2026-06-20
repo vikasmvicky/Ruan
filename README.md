@@ -1,150 +1,224 @@
-# Ruan 🤖
-### AI-Powered Business Intelligence for India's Small Vendors
+# 🤖 Ruan — AI Business Copilot for India's Small Businesses
 
-> *"Every big company has a data team. Every small business has a rough book. Ruan closes that gap — in your language, in your city, for free."*
+*"Every big company has a data team. Every small business has a rough book. Ruan closes that gap — in your language, in your city, for free."*
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-Deployed-red)
+![AI](https://img.shields.io/badge/AI-Groq-green)
+![Status](https://img.shields.io/badge/Status-Live-brightgreen)
+
+---
 
 ## 🚀 Live Demo
-**Try Ruan now:** [ruan-vikasmvicky.streamlit.app](https://ruan-vikasmvicky.streamlit.app) *(update with your actual URL)*
+
+🌐 **Try Ruan:** https://ruan-vikasmvicky.streamlit.app
+
+💻 **GitHub Repository:** https://github.com/vikasmvicky/Ruan
 
 ---
 
-## The Problem
+## 🎯 The Problem
 
-India has **5.70 crore registered MSMEs** (Ministry of MSME, Udyam Portal, December 2024) contributing **35.4% of India's GDP** and employing **24.14 crore people**. Yet only **13% actively use any data analytics tools** (META Report Card 2025, indiasmeforum.org).
+India has **5.70 crore registered MSMEs** contributing approximately **35.4% of India's GDP** and employing over **24 crore people**. Despite their economic importance, digital adoption remains limited, and many businesses still maintain records in notebooks, registers, and informal notes.
 
-This is not unwillingness — it's lack of access. Every existing tool assumes:
-- Clean structured CSV files
-- English fluency
-- ₹2,000+/month subscription budgets
-- Technical literacy to read dashboards
+Most business analytics tools assume:
 
-India's digital literacy rate stands at just **37%** (NASSCOM). Most vendors track sales in handwritten registers, not spreadsheets — and the same profit number means a completely different thing depending on which city you're in.
+* Clean, structured spreadsheets
+* English proficiency
+* Paid subscriptions
+* Technical knowledge to interpret dashboards
 
-**Ruan was built to fix this.**
+For millions of small businesses, these assumptions create a significant accessibility gap.
 
----
-
-## The Solution
-
-Ruan is India's first **contextually intelligent AI business analyst** for small vendors — combining data analysis, regional language conversation, and economic context awareness in one free tool.
-
-### 4-Layer Intelligence System
-
-| Layer | What it does |
-|-------|--------------|
-| **1. Raw Data Analysis** | Pandas processes uploaded data — revenue, profit, margin, best/worst products |
-| **2. Industry Benchmarking** | Compares margins against normal ranges for the vendor's specific business type |
-| **3. Geographic Context** | City-specific cost database (25+ cities) — ₹20K profit in Mysuru ≠ Bangalore |
-| **4. Seasonal Intelligence** | Understands India's business calendar — Diwali stock spikes aren't losses |
+Ruan was built to bridge that gap.
 
 ---
 
-## Features
+## 💡 The Solution
 
-**Three ways to add data**
-- 📁 Upload CSV / Excel
-- 📷 Photo of handwritten register (OCR via Tesseract)
-- 💬 Talk to Ruan — type or speak naturally, LLM extracts structured sales data
+**Ruan** is an AI-powered Business Intelligence Copilot designed specifically for India's MSMEs. It enables vendors to digitize business records and receive actionable insights through natural, familiar interactions.
 
-**AI Conversation**
-- Groq Llama 3.3 70B-powered chat
-- Kannada, Hindi, Tamil, English support
-- Voice input via Groq Whisper transcription
-- Simple vs Detailed response modes
+Ruan combines:
 
-**Memory**
-- ChromaDB RAG vector memory — remembers analyses and conversations across sessions
-- Sacred Timeline — visual history of business performance
+* Business analytics
+* Conversational AI
+* OCR-based digitization
+* Context-aware insights
+* Multilingual interaction
 
-**Visualizations**
-- Revenue vs Profit vs Loss
-- Daily profit trend (7-day rolling average)
-- Product performance ranking
-- Profit margin gauge vs industry benchmark
-- Sales by day of week
-
-**Privacy**
-- Vendor data isolation — each vendor's history stored separately
-- No data sharing between users
-- Local-first architecture, no mandatory cloud dependency
+All within one accessible platform.
 
 ---
 
-## Tech Stack
+## 🧠 Four-Layer Intelligence System
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Streamlit |
-| LLM | Groq + Llama 3.3 70B |
-| Orchestration | LangChain |
-| Memory | ChromaDB + SentenceTransformers |
-| Voice | Groq Whisper API |
-| OCR | Tesseract |
-| Analysis | Pandas + NumPy |
-| Charts | Plotly |
-| Offline Option | Ollama + Phi3 |
-
-**Total cost to run: ₹0/month**
+| Layer                 | Description                                                 |
+| --------------------- | ----------------------------------------------------------- |
+| Raw Data Analysis     | Revenue, profit, margins, product performance analysis      |
+| Industry Benchmarking | Compare business performance with industry norms            |
+| Geographic Context    | Interpret performance relative to local economic conditions |
+| Seasonal Intelligence | Understand festivals and seasonal business patterns         |
 
 ---
 
-## Project Structure
+## ✨ Features
 
-```
+### 📁 CSV & Excel Analysis
+
+Upload business data and automatically generate:
+
+* Revenue analysis
+* Profit insights
+* Product performance rankings
+* Interactive dashboards
+
+---
+
+### 📷 Register Digitization (OCR)
+
+Convert handwritten business registers into structured digital records using Tesseract OCR.
+
+---
+
+### 💬 Conversational Data Entry
+
+Examples:
+
+* "Today tea sales were ₹7000."
+* "Coffee sales were ₹10000 and ingredients cost ₹3000."
+
+Ruan extracts structured information automatically.
+
+---
+
+### 🎤 Voice Interaction
+
+Speak naturally in:
+
+* English
+* Kannada
+* Hindi
+* Tamil
+
+Speech is transcribed and converted into structured business information.
+
+---
+
+### 📊 Business Intelligence Dashboard
+
+Generate:
+
+* Revenue trends
+* Profit and loss summaries
+* Product performance insights
+* Industry comparisons
+* Visual analytics
+
+---
+
+## 🧠 Memory System
+
+* ChromaDB vector memory
+* Session-aware conversations
+* Historical business insights
+* Vendor-specific data isolation
+
+---
+
+## 🔒 Privacy
+
+* Vendor data isolation
+* No cross-user data sharing
+* Local-first architecture
+* No mandatory cloud dependency
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer          | Technology                      |
+| -------------- | ------------------------------- |
+| Frontend       | Streamlit                       |
+| LLM            | Groq + Llama 3.3 70B            |
+| Orchestration  | LangChain                       |
+| Memory         | ChromaDB + SentenceTransformers |
+| Voice          | Groq Whisper                    |
+| OCR            | Tesseract OCR                   |
+| Analytics      | Pandas + NumPy                  |
+| Visualizations | Plotly                          |
+| Offline Option | Ollama + Phi-3                  |
+
+---
+
+## 📂 Project Structure
+
+```text
 ruan/
 ├── app.py
 ├── requirements.txt
+├── packages.txt
 ├── core/
-│   ├── analyst.py        # 4-layer intelligence engine
-│   ├── llm.py             # Groq LLM + Ruan persona
-│   ├── memory.py          # ChromaDB RAG memory
-│   ├── charts.py          # Plotly visualizations
-│   ├── data_entry.py      # OCR + conversational entry
-│   └── voice.py           # Voice transcription
+│   ├── analyst.py
+│   ├── llm.py
+│   ├── memory.py
+│   ├── charts.py
+│   ├── data_entry.py
+│   └── voice.py
 ├── ui/
-│   ├── ruan.py             # Ruan + Owly animations
-│   └── theme.py            # Forest theme + widget
+│   ├── ruan.py
+│   └── theme.py
 └── data/
-    ├── vendors/            # Per-vendor isolated history
-    └── memory_db/          # ChromaDB vector store
+    ├── vendors/
+    └── memory_db/
 ```
 
 ---
 
-## Setup
+## ⚙️ Setup
 
 ```bash
 git clone https://github.com/vikasmvicky/Ruan.git
 cd Ruan
+
 python -m venv venv
 venv\Scripts\activate
+
 pip install -r requirements.txt
+
 echo "GROQ_API_KEY=your_key_here" > .env
+
 streamlit run app.py
 ```
 
-Get a free Groq API key at [console.groq.com](https://console.groq.com).
+---
+
+## 📸 Screenshots
+
+* Home Page
+* OCR Register Upload
+* Conversational Sales Entry
+* Business Dashboard
+* Insights Panel
 
 ---
 
-## Research Sources
+## 🌍 Vision
 
-| Statistic | Source |
-|-----------|--------|
-| 5.70 crore MSMEs registered | Ministry of MSME, Udyam Portal, Dec 2024 |
-| 35.4% of India's GDP | META Report Card 2025, indiasmeforum.org |
-| Only 13% use data analytics | META Report Card 2025 / NASSCOM-Deloitte MSME Digital Index |
-| 37% digital literacy rate | NASSCOM, 2024 |
+Ruan does not replace human analysts.
+
+Instead, it empowers millions of businesses that have never had access to data analysis tools. By enabling better business decisions, Ruan contributes toward a more data-driven and digitally inclusive MSME ecosystem.
 
 ---
 
-## Economic Impact
+## 👨‍💻 Author
 
-Ruan doesn't replace data analyst jobs — it serves the 63 million businesses that **never could afford one**. As these businesses grow through better decisions, they create new demand for human analysts. Better small-business decisions strengthen India's broader economy.
+**Vikas M**
+B.E. Computer Science and Engineering
+Global Academy of Technology, Bengaluru
+
+📧 [vikasgowdam022@gmail.com](mailto:vikasgowdam022@gmail.com)
+💻 https://github.com/vikasmvicky
+🔗 Add your LinkedIn URL
 
 ---
 
-
----
-
-*Built for India's small businesses. 100% private. 100% free. Forever.*
+**Built for India's small businesses. Private. Accessible. Free.**
