@@ -30,6 +30,13 @@ from core.charts import (
     profit_margin_gauge,
     day_performance_chart
 )
+from core.data_entry import (
+    ocr_to_dataframe,
+    extract_sale_from_text,
+    save_conversational_entry,
+    get_vendor_entries_as_df,
+    export_entries_to_excel
+)
 
 # ─── Page Config ───────────────────────────────────────────
 st.set_page_config(
@@ -45,14 +52,14 @@ st.markdown(get_nature_theme(), unsafe_allow_html=True)
 st.markdown("""
 <style>
 .stTextInput > div > div > input {
-    color: #FFFFFF !important;
-    background: rgba(74,210,149,0.08) !important;
+    color: #000000 !important;
+    background: rgba(255,255,255,0.95) !important;
     border: 1px solid rgba(74,210,149,0.3) !important;
     border-radius: 12px !important;
-    caret-color: #4AD295 !important;
+    caret-color: #1A1A1A !important;
 }
 .stTextInput > div > div > input::placeholder {
-    color: rgba(255,255,255,0.35) !important;
+    color: rgba(0,0,0,0.4) !important;
 }
 .stTextInput > div > div > input:focus {
     border-color: rgba(74,210,149,0.7) !important;
@@ -265,11 +272,11 @@ if "city" not in st.session_state:
 
         if st.button("Let's Go with Ruan! →"):
             if city and vendor_name:
-                st.session_state.emotion   = "excited"
-                st.session_state.lang      = lang
-                st.session_state.business  = business
-                st.session_state.city      = city
-                st.session_state.vendor    = vendor_name
+                st.session_state.emotion = "excited"
+                st.session_state.lang = lang
+                st.session_state.business = business
+                st.session_state.city = city
+                st.session_state.vendor = vendor_name
                 st.rerun()
             else:
                 st.session_state.emotion = "worried"
@@ -376,107 +383,121 @@ else:
         </p>
     """, unsafe_allow_html=True)
 
-    # Import new module
-from core.data_entry import (
-    ocr_to_dataframe,
-    extract_sale_from_text,
-    save_conversational_entry,
-    get_vendor_entries_as_df,
-    export_entries_to_excel
-)
+    tab1, tab2, tab3 = st.tabs([
+        "📁 Upload File",
+        "📷 Photo of Register",
+        "💬 Tell Ruan"
+    ])
 
-tab1, tab2, tab3 = st.tabs([
-    "📁 Upload File",
-    "📷 Photo of Register",
-    "💬 Tell Ruan"
-])
+    uploaded_file = None
 
-uploaded_file = None
+    with tab1:
+        uploaded_file = st.file_uploader(
+            "Upload",
+            type=["csv", "xlsx", "xls"],
+            label_visibility="collapsed"
+        )
 
-with tab1:
-    uploaded_file = st.file_uploader(
-        "Upload",
-        type=["csv", "xlsx", "xls"],
-        label_visibility="collapsed"
-    )
+    with tab2:
+        st.caption("Take a photo of your handwritten register")
+        photo_file = st.file_uploader(
+            "Upload photo",
+            type=["jpg", "jpeg", "png"],
+            label_visibility="collapsed",
+            key="photo_upload"
+        )
 
-with tab2:
-    st.caption("Take a photo of your handwritten register")
-    photo_file = st.file_uploader(
-        "Upload photo",
-        type=["jpg", "jpeg", "png"],
-        label_visibility="collapsed",
-        key="photo_upload"
-    )
+        if photo_file:
+            with st.spinner("Ruan is reading your handwriting... 🔍"):
+                ocr_df, raw_text = ocr_to_dataframe(photo_file)
 
-    if photo_file:
-        with st.spinner("Ruan is reading your handwriting... 🔍"):
-            ocr_df, raw_text = ocr_to_dataframe(photo_file)
-
-        if ocr_df is not None:
-            st.success(f"Found {len(ocr_df)} items!")
-            st.dataframe(ocr_df, use_container_width=True)
-            if st.button("✅ Use this data"):
-                # Convert to standard format for analysis
-                ocr_df['Sales'] = ocr_df['Quantity'] * ocr_df['Price']
-                ocr_df['Profit'] = ocr_df['Sales'] * 0.2  # estimate
-                uploaded_file = "ocr_data"
-                st.session_state.ocr_df = ocr_df
-        else:
-            st.warning(raw_text or "Could not read the image clearly. Try better lighting!")
-
-with tab3:
-    st.caption(
-        "Just tell Ruan what you sold today — "
-        "in any language!"
-    )
-
-    sale_text = st.text_input(
-        "Tell Ruan",
-        placeholder="e.g. Aaj maine 50 Crocin becha 15 rupaye mein",
-        label_visibility="collapsed",
-        key="conversational_entry"
-    )
-
-    if st.button("Add Sale 💬", key="add_sale_btn"):
-        if sale_text:
-            with st.spinner("Understanding..."):
-                extracted = extract_sale_from_text(
-                    sale_text, None,
-                    st.session_state.get('vendor', 'friend'),
-                    st.session_state.business,
-                    st.session_state.city
-                )
-
-            if extracted and extracted.get('found'):
-                save_conversational_entry(
-                    st.session_state.get('vendor', 'unknown'),
-                    extracted['item'],
-                    extracted['quantity'],
-                    extracted['price']
-                )
-                st.success(
-                    f"✅ Added: {extracted['quantity']} x "
-                    f"{extracted['item']} at "
-                    f"Rs {extracted['price']} each"
-                )
+            if ocr_df is not None:
+                st.success(f"Found {len(ocr_df)} items!")
+                st.dataframe(ocr_df, use_container_width=True)
+                if st.button("✅ Use this data"):
+                    # Convert to standard format for analysis
+                    ocr_df['Sales'] = ocr_df['Quantity'] * ocr_df['Price']
+                    ocr_df['Profit'] = ocr_df['Sales'] * 0.2  # estimate
+                    uploaded_file = "ocr_data"
+                    st.session_state.ocr_df = ocr_df
             else:
-                st.warning(
-                    "Couldn't understand that. Try: "
-                    "'sold 50 Crocin at 15 rupees'"
-                )
+                st.warning(raw_text or "Could not read the image clearly. Try better lighting!")
 
-    # Show entries so far
-    entries_df = get_vendor_entries_as_df(
-        st.session_state.get('vendor', 'unknown')
-    )
-    if entries_df is not None:
-        st.markdown("##### Your entries so far:")
-        st.dataframe(entries_df, use_container_width=True)
+    with tab3:
+        st.caption(
+            "Speak or type what you sold today — "
+            "in any language!"
+        )
 
-        if st.button("📊 Analyse my entries"):
-            uploaded_file = "conversational_data"
-            st.session_state.conv_df = entries_df
+        from core.voice import transcribe_audio
+
+        # Voice recorder
+        audio_value = st.audio_input(
+            "🎤 Speak your sale",
+            key="voice_recorder"
+        )
+
+        voice_text = ""
+        if audio_value is not None:
+            with st.spinner("Ruan is listening... 🎧"):
+                audio_bytes = audio_value.read()
+                transcribed, error = transcribe_audio(audio_bytes)
+
+            if transcribed:
+                st.success(f"🎤 Heard: \"{transcribed}\"")
+                voice_text = transcribed
+            else:
+                st.warning(f"Could not understand audio: {error}")
+
+        st.markdown("**Or type it:**")
+
+        sale_text = st.text_input(
+            "Tell Ruan",
+            value=voice_text,
+            placeholder="e.g. Aaj maine 50 Crocin becha 15 rupaye mein",
+            label_visibility="collapsed",
+            key="conversational_entry"
+        )
+
+        if st.button("Add Sale 💬", key="add_sale_btn"):
+            if sale_text:
+                with st.spinner("Understanding..."):
+                    extracted = extract_sale_from_text(
+                        sale_text, None,
+                        st.session_state.get('vendor', 'friend'),
+                        st.session_state.business,
+                        st.session_state.city
+                    )
+
+                if extracted and extracted.get('found'):
+                    save_conversational_entry(
+                        st.session_state.get('vendor', 'unknown'),
+                        extracted['item'],
+                        extracted['quantity'],
+                        extracted['price']
+                    )
+                    st.success(
+                        f"✅ Added: {extracted['quantity']} x "
+                        f"{extracted['item']} at "
+                        f"Rs {extracted['price']} each"
+                    )
+                else:
+                    st.warning(
+                        "Couldn't understand that. Try: "
+                        "'sold 50 Crocin at 15 rupees'"
+                    )
+
+        # Show entries so far
+        entries_df = get_vendor_entries_as_df(
+            st.session_state.get('vendor', 'unknown')
+        )
+        if entries_df is not None:
+            st.markdown("##### Your entries so far:")
+            st.dataframe(entries_df, use_container_width=True)
+
+            if st.button("📊 Analyse my entries"):
+                uploaded_file = "conversational_data"
+                st.session_state.conv_df = entries_df
 
     # ── No data button ──
     col_a, col_b = st.columns([1, 1])
@@ -710,13 +731,13 @@ with tab3:
             st.session_state.business,
             insights
         )
-         # Save to RAG memory
+        # Save to RAG memory
         save_analysis_to_memory(
             st.session_state.get('vendor', 'unknown'),
             st.session_state.business,
             st.session_state.city,
             insights
-)
+        )
 
         # Update widget
         st.markdown(
@@ -950,8 +971,7 @@ with tab3:
                     </p>
                     <p style='font-size:14px;
                     color:#4AD295;margin:0;'>
-                        Rs {insights.get(
-                            'best_product_profit',0):,.0f}
+                        Rs {insights.get('best_product_profit',0):,.0f}
                     </p>
                 </div>
             """, unsafe_allow_html=True)
@@ -969,8 +989,7 @@ with tab3:
                     </p>
                     <p style='font-size:14px;
                     color:#EF4444;margin:0;'>
-                        Rs {insights.get(
-                            'worst_product_profit',0):,.0f}
+                        Rs {insights.get('worst_product_profit',0):,.0f}
                     </p>
                 </div>
             """, unsafe_allow_html=True)
@@ -1089,8 +1108,7 @@ with tab3:
                 with st.spinner("Ruan is thinking... 🤔"):
                     response = ask_ruan(
                         question=question,
-                        vendor=st.session_state.get(
-                            'vendor', 'friend'),
+                        vendor=st.session_state.get('vendor', 'friend'),
                         business=st.session_state.business,
                         city=st.session_state.city,
                         language=st.session_state.lang,
@@ -1102,106 +1120,108 @@ with tab3:
                     "role": "assistant",
                     "content": response
                 })
+                # Save Q&A to memory
+                save_question_to_memory(
+                    st.session_state.get('vendor', 'unknown'),
+                    question,
+                    response
+                )
                 st.session_state.emotion = "excited"
                 st.rerun()
             else:
                 st.warning("Please type a question!")
-                # Save Q&A to memory
-            save_question_to_memory(
-                st.session_state.get('vendor', 'unknown'),
-                question,
-                response)
-            # ── Memory timeline ──
-st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("""
-    <p class='section-label'>Sacred Timeline</p>
-    <h3 style='color:#FFFFFF;font-weight:700;
-    margin-bottom:16px;'>
-        Ruan's memory of your business
-    </h3>
-""", unsafe_allow_html=True)
 
-memory_summary = get_vendor_memory_summary(
-    st.session_state.get('vendor', 'unknown')
-)
+        # ── Memory timeline ──
+        st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown("""
+            <p class='section-label'>Sacred Timeline</p>
+            <h3 style='color:#FFFFFF;font-weight:700;
+            margin-bottom:16px;'>
+                Ruan's memory of your business
+            </h3>
+        """, unsafe_allow_html=True)
 
-if memory_summary and memory_summary['total_memories'] > 0:
-    st.markdown(f"""
-        <div class='insight-card'
-        style='border-left:4px solid #4AD295;'>
-            <p style='color:#4AD295;font-size:13px;
-            font-weight:600;margin:0 0 8px;
-            text-transform:uppercase;letter-spacing:1px;'>
-                🧠 Memory Active
-            </p>
-            <p style='color:rgba(255,255,255,0.6);
-            font-size:13px;margin:0;'>
-                Ruan remembers
-                <b style='color:#FFFFFF;'>
-                    {memory_summary['total_memories']}
-                </b>
-                interactions from your business history.
-                <b style='color:#FFFFFF;'>
-                    {memory_summary['analysis_count']}
-                </b>
-                data analyses stored.
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+        memory_summary = get_vendor_memory_summary(
+            st.session_state.get('vendor', 'unknown')
+        )
 
-    # Show timeline entries
-    entries = memory_summary.get('entries', [])
-    if entries:
-        for entry in entries[-3:]:
-            profit = entry.get('profit', '0')
-            margin = entry.get('margin', '0')
-            date = entry.get('date', 'Unknown')
+        if memory_summary and memory_summary['total_memories'] > 0:
             st.markdown(f"""
                 <div class='insight-card'
-                style='margin:6px 0;'>
-                    <p style='color:rgba(255,255,255,0.4);
-                    font-size:11px;margin:0 0 4px;
-                    text-transform:uppercase;
-                    letter-spacing:0.5px;'>
-                        📅 {date}
+                style='border-left:4px solid #4AD295;'>
+                    <p style='color:#4AD295;font-size:13px;
+                    font-weight:600;margin:0 0 8px;
+                    text-transform:uppercase;letter-spacing:1px;'>
+                        🧠 Memory Active
                     </p>
-                    <p style='color:rgba(255,255,255,0.7);
+                    <p style='color:rgba(255,255,255,0.6);
                     font-size:13px;margin:0;'>
-                        Profit:
-                        <b style='color:#4AD295;'>
-                            Rs {float(profit):,.0f}
+                        Ruan remembers
+                        <b style='color:#FFFFFF;'>
+                            {memory_summary['total_memories']}
                         </b>
-                        • Margin:
-                        <b style='color:#4AD295;'>
-                            {margin}%
+                        interactions from your business history.
+                        <b style='color:#FFFFFF;'>
+                            {memory_summary['analysis_count']}
                         </b>
+                        data analyses stored.
                     </p>
                 </div>
             """, unsafe_allow_html=True)
 
-    # Clear memory button
-    if st.button(
-        "🗑️ Clear Memory",
-        use_container_width=False
-    ):
-        clear_vendor_memory(
-            st.session_state.get('vendor', 'unknown')
-        )
-        st.success("Memory cleared! Fresh start. ✅")
-        st.rerun()
+            # Show timeline entries
+            entries = memory_summary.get('entries', [])
+            if entries:
+                for entry in entries[-3:]:
+                    profit = entry.get('profit', '0')
+                    margin = entry.get('margin', '0')
+                    date = entry.get('date', 'Unknown')
+                    st.markdown(f"""
+                        <div class='insight-card'
+                        style='margin:6px 0;'>
+                            <p style='color:rgba(255,255,255,0.4);
+                            font-size:11px;margin:0 0 4px;
+                            text-transform:uppercase;
+                            letter-spacing:0.5px;'>
+                                📅 {date}
+                            </p>
+                            <p style='color:rgba(255,255,255,0.7);
+                            font-size:13px;margin:0;'>
+                                Profit:
+                                <b style='color:#4AD295;'>
+                                    Rs {float(profit):,.0f}
+                                </b>
+                                • Margin:
+                                <b style='color:#4AD295;'>
+                                    {margin}%
+                                </b>
+                            </p>
+                        </div>
+                    """, unsafe_allow_html=True)
 
-else:
-    st.markdown(f"""
-        <div class='insight-card'
-        style='border-left:4px solid rgba(255,255,255,0.1);'>
-            <p style='color:rgba(255,255,255,0.4);
-            font-size:13px;margin:0;'>
-                🧠 No memories yet.
-                Upload data and Ruan will start
-                building your business timeline.
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+            # Clear memory button
+            if st.button(
+                "🗑️ Clear Memory",
+                use_container_width=False
+            ):
+                clear_vendor_memory(
+                    st.session_state.get('vendor', 'unknown')
+                )
+                st.success("Memory cleared! Fresh start. ✅")
+                st.rerun()
+
+        else:
+            st.markdown(f"""
+                <div class='insight-card'
+                style='border-left:4px solid rgba(255,255,255,0.1);'>
+                    <p style='color:rgba(255,255,255,0.4);
+                    font-size:13px;margin:0;'>
+                        🧠 No memories yet.
+                        Upload data and Ruan will start
+                        building your business timeline.
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
 
     # ── Footer ──
     st.markdown("""

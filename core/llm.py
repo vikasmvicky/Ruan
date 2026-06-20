@@ -6,6 +6,12 @@ _memory_store = {}
 
 def get_api_key():
     try:
+        import streamlit as st
+        if "GROQ_API_KEY" in st.secrets:
+            return st.secrets["GROQ_API_KEY"]
+    except Exception:
+        pass
+    try:
         env_path = os.path.join(
             os.path.dirname(os.path.dirname(__file__)), '.env'
         )
