@@ -10,7 +10,7 @@
 
 ## 🚀 Live Demo
 
-🌐 **Try Ruan:** https://ruan-vikasmvicky.streamlit.app
+🌐 **Try Ruan:** https://jesubmmguzkybaiwwnsgrb.streamlit.app/#ruan-top
 
 💻 **GitHub Repository:** https://github.com/vikasmvicky/Ruan
 
@@ -194,10 +194,18 @@ streamlit run app.py
 ## 📸 Screenshots
 
 * Home Page
-* OCR Register Upload
+  <img width="1920" height="1080" alt="Screenshot (848)" src="https://github.com/user-attachments/assets/e1d31790-cd4f-49da-9af1-aca6554e1dc1" />
+
 * Conversational Sales Entry
+ <img width="1920" height="1080" alt="Screenshot (846)" src="https://github.com/user-attachments/assets/5e9ccaf1-eb9a-423c-83a2-e519e497b837" />
+ *image of ruan and owly
+ <img width="1920" height="1080" alt="Screenshot (922)" src="https://github.com/user-attachments/assets/1ff750e2-495b-4a09-aa77-efe5359a4a30" />
+
+
 * Business Dashboard
-* Insights Panel
+  <img width="1920" height="1080" alt="Screenshot (923)" src="https://github.com/user-attachments/assets/e77a6c9d-d4fd-433b-97bb-ac76bd0aa74c" />
+
+
 
 ---
 
