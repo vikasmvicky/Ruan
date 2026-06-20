@@ -225,7 +225,7 @@ Global Academy of Technology, Bengaluru
 
 📧 [vikasgowdam022@gmail.com](mailto:vikasgowdam022@gmail.com)
 💻 https://github.com/vikasmvicky
-🔗 Add your LinkedIn URL
+🔗 https://www.linkedin.com/in/vikas-m-vicky-6615062a2/
 
 ---
 
